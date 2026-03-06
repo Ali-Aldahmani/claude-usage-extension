@@ -1,32 +1,34 @@
 # Release Process
 
-This document describes how to create a new release of Claude Usage Tracker.
+This document describes how to create a new release of the Claude Usage Tracker Chrome Extension.
 
 ## Prerequisites
 
-- Xcode with command line tools
-- Git configured with push access to the repository
+- **Git** configured with push access to the repository
+- **Google Chrome** for final testing
+- **A Chrome Web Store developer account** (one-time $5 registration fee)
 - All changes committed and pushed to `main` branch
+
+---
 
 ## Release Checklist
 
-### 1. Update Version Numbers
+### 1. Update Version Number
 
-Edit `Claude Usage.xcodeproj/project.pbxproj`:
+Edit `chrome-extension/manifest.json`:
 
-```bash
-# Update MARKETING_VERSION (e.g., 2.1.0 → 2.2.0)
-# Update CURRENT_PROJECT_VERSION (increment build number, e.g., 2 → 3)
+```json
+{
+  "version": "1.1.0"
+}
 ```
 
-**Important:**
-- `MARKETING_VERSION` is the user-facing version (e.g., 2.2.0)
-- `CURRENT_PROJECT_VERSION` is the build number used by Sparkle for update detection
-- **ALWAYS increment CURRENT_PROJECT_VERSION** for each release, even for patches!
+> Chrome Web Store requires the version to always increment. You cannot re-upload the same version number.
 
 ### 2. Update CHANGELOG.md
 
-Add a new section at the top with:
+Add a new section at the top:
+
 ```markdown
 ## [X.Y.Z] - YYYY-MM-DD
 
@@ -40,15 +42,27 @@ Add a new section at the top with:
 - Bug fixes...
 ```
 
-### 3. Commit Version Changes
+### 3. Test Before Release
+
+Load the extension unpacked and verify:
+
+- [ ] Extension loads without errors in `chrome://extensions/`
+- [ ] Usage data displays correctly in the popup
+- [ ] Badge updates on the toolbar icon
+- [ ] Notifications fire at correct thresholds
+- [ ] Settings page saves and loads correctly
+- [ ] Multi-profile switching works
+- [ ] No errors in the service worker console
+
+### 4. Commit Version Changes
 
 ```bash
-git add Claude\ Usage.xcodeproj/project.pbxproj CHANGELOG.md
-git commit -m "chore: Bump version to X.Y.Z"
+git add chrome-extension/manifest.json CHANGELOG.md
+git commit -m "chore: bump version to X.Y.Z"
 git push
 ```
 
-### 4. Create and Push Tag
+### 5. Create and Push Tag
 
 ```bash
 git tag -a vX.Y.Z -m "Release vX.Y.Z: Brief description
@@ -60,71 +74,89 @@ git tag -a vX.Y.Z -m "Release vX.Y.Z: Brief description
 git push origin vX.Y.Z
 ```
 
-### 5. Wait for Workflows
+### 6. Package the Extension
 
-The tag push triggers three automated workflows:
+```bash
+# Zip only the chrome-extension folder
+zip -r claude-usage-extension-vX.Y.Z.zip chrome-extension/
 
-1. **Release workflow** (~5-10 minutes)
-   - Builds the app
-   - Signs with Apple Developer certificate
-   - Notarizes with Apple
-   - Creates GitHub release with ZIP file
+# Verify the zip contains the right files
+unzip -l claude-usage-extension-vX.Y.Z.zip
+```
 
-2. **Generate Appcast workflow** (triggers after release)
-   - Downloads the release
-   - Generates appcast.xml with EdDSA signature
-   - Updates gh-pages with new version
+> Make sure the zip does not include any development files, `.DS_Store`, or test files.
 
-3. **Update Homebrew Cask workflow** (triggers after release)
-   - Automatically updates Homebrew formula
+### 7. Publish to Chrome Web Store
 
-Monitor at: `https://github.com/hamed-elfayome/Claude-Usage-Tracker/actions`
+1. Go to the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole)
+2. Select **Claude Usage Tracker**
+3. Click **"Package"** → **"Upload new package"**
+4. Upload `claude-usage-extension-vX.Y.Z.zip`
+5. Update the store listing description if needed
+6. Click **"Submit for review"**
 
-### 6. Verify Release
+> Review typically takes 1–3 business days for updates.
 
-1. Check GitHub releases page for the new release
-2. Verify appcast: `https://hamed-elfayome.github.io/Claude-Usage-Tracker/appcast.xml`
-3. Test in-app update:
-   - Run an older version of the app
-   - Check for updates
-   - Verify new version appears and installs correctly
+### 8. Create GitHub Release
+
+1. Go to [Releases](../../releases) → **"Draft a new release"**
+2. Select the tag `vX.Y.Z` you pushed
+3. Set title: `v X.Y.Z — Brief description`
+4. Paste the relevant CHANGELOG.md section into the description
+5. Attach `claude-usage-extension-vX.Y.Z.zip`
+6. Click **"Publish release"**
+
+### 9. Verify Release
+
+- [ ] GitHub release page shows the correct tag and zip
+- [ ] Chrome Web Store listing shows the new version (after review approval)
+- [ ] Test installing from the Web Store on a clean Chrome profile
+
+---
 
 ## Troubleshooting
 
-### Update not showing in app
+### Chrome Web Store rejected the submission
+- Check that `manifest.json` has no unsupported fields
+- Verify all declared permissions are actually used in code
+- Review the rejection reason in the Developer Dashboard — it usually tells you exactly what to fix
 
-- Check `CURRENT_PROJECT_VERSION` was incremented (not just `MARKETING_VERSION`)
-- Verify appcast.xml has higher `<sparkle:version>` number
-- Clear app caches: `~/Library/Caches/HamedElfayome.Claude-Usage/`
+### Extension not updating for existing users
+- Chrome auto-updates extensions every few hours
+- Users can force update via `chrome://extensions/` → **"Update"** button
+- Verify the new version number in `manifest.json` is higher than the previous one
 
-### Signature validation error
+### Service worker not loading after update
+- Check `background.js` for syntax errors
+- Open `chrome://extensions/` → click the service worker link → check Console tab
+- Manifest V3 service workers terminate when idle — this is expected behavior
 
-- Workflow regenerates signatures automatically
-- If you manually edited appcast.xml, it will fail
-- Re-run "Generate Appcast" workflow to regenerate with correct signatures
+### Zip file issues
+- Never zip the parent folder — zip the `chrome-extension/` contents directly
+- Avoid including hidden files: `zip -r release.zip chrome-extension/ -x "*.DS_Store" -x "*/.git/*"`
 
-### Workflow failures
-
-- **Release workflow**: Check code signing certificates and notarization credentials
-- **Appcast workflow**: Verify release ZIP was created and SPARKLE_PRIVATE_KEY secret exists
-- **Homebrew workflow**: Check RELEASE_TOKEN has proper permissions
+---
 
 ## Quick Reference
 
 ```bash
-# Full release in 4 commands:
-sed -i '' 's/MARKETING_VERSION = X.Y.Z/MARKETING_VERSION = X.Y.Z+1/g' Claude\ Usage.xcodeproj/project.pbxproj
-sed -i '' 's/CURRENT_PROJECT_VERSION = N/CURRENT_PROJECT_VERSION = N+1/g' Claude\ Usage.xcodeproj/project.pbxproj
-git add -A && git commit -m "chore: Bump version to X.Y.Z+1" && git push
-git tag -a vX.Y.Z+1 -m "Release vX.Y.Z+1" && git push origin vX.Y.Z+1
+# Full release in 5 commands:
+# 1. Update version in manifest.json manually, then:
+git add chrome-extension/manifest.json CHANGELOG.md
+git commit -m "chore: bump version to X.Y.Z"
+git tag -a vX.Y.Z -m "Release vX.Y.Z" && git push origin main --tags
+zip -r claude-usage-extension-vX.Y.Z.zip chrome-extension/
+# Then upload zip to Chrome Web Store + GitHub Releases
 ```
+
+---
 
 ## Version Numbering
 
 Follow [Semantic Versioning](https://semver.org/):
 
-- **Major** (X.0.0): Breaking changes, major new features
-- **Minor** (x.Y.0): New features, backwards compatible
-- **Patch** (x.y.Z): Bug fixes, minor improvements
+- **Major** (`X.0.0`): Breaking changes, major new features
+- **Minor** (`x.Y.0`): New features, backwards compatible
+- **Patch** (`x.y.Z`): Bug fixes, minor improvements
 
-Build number (`CURRENT_PROJECT_VERSION`) always increments sequentially: 1, 2, 3, 4...
+> Chrome Web Store compares versions numerically. `1.0.10` is greater than `1.0.9`. Always use clean semver — no build numbers needed.
