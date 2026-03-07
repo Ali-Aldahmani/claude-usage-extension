@@ -22,8 +22,8 @@ Cross-platform port of the [macOS menu bar app](https://github.com/hamed-elfayom
 
 This fork adds a fully functional Chrome extension under `chrome-extension/`, bringing every core feature of the original macOS app to the browser — with zero setup required.
 
-| | macOS App | Chrome Extension |
-|---|---|---|
+| Feature | macOS App | Chrome Extension |
+| :--- | :--- | :--- |
 | **Platform** | macOS 14+ only | Windows, macOS, Linux |
 | **Session Key** | Manual extraction | ✅ Auto-read from browser |
 | **Installation** | App download + Homebrew | ✅ One-click from Chrome Web Store |
@@ -47,32 +47,29 @@ This fork adds a fully functional Chrome extension under `chrome-extension/`, br
 
 ## 📦 Installation
 
-### Option 1 — Chrome Web Store *(coming soon)*
-> Click **Add to Chrome** once the listing is live.
+### ⚠️ Note
+The Chrome Web Store listing is **pending approval**. You can wait for it to go live, or use the extension immediately via **Developer Mode**.
 
-### Option 2 — Load Unpacked (Developer Mode)
+### Option 1 — Load Unpacked (Developer Mode)
 
-```bash
-# 1. Clone this repository
-git clone https://github.com/YOUR_USERNAME/claude-usage-extension.git
+1. **Clone this repository** ```bash
+   git clone [https://github.com/YOUR_USERNAME/claude-usage-extension.git](https://github.com/YOUR_USERNAME/claude-usage-extension.git)
+   ```
+2. Open Chrome and go to: `chrome://extensions/`
+3. Enable **"Developer mode"** (toggle at the top right).
+4. Click **"Load unpacked"** and select the `chrome-extension/` folder.
+5. The extension icon will appear in your toolbar immediately.
 
-# 2. Open Chrome and go to
-chrome://extensions/
-
-# 3. Enable "Developer mode" (top right toggle)
-
-# 4. Click "Load unpacked" and select the chrome-extension/ folder
-```
-
-You'll see the extension icon appear in your toolbar immediately.
+### Option 2 — Chrome Web Store (coming soon)
+Click **Add to Chrome** once the listing is approved.
 
 ---
 
 ## 🛠️ How It Works
 
-The extension uses Chrome's `cookies` API to automatically read your `sessionKey` from `claude.ai` — the same cookie the original macOS app asks you to extract manually. No credentials are ever sent anywhere except directly to Anthropic's own API.
+The extension uses Chrome's cookies API to automatically read your `sessionKey` from `claude.ai` — the same cookie the original macOS app asks you to extract manually. No credentials are ever sent anywhere except directly to Anthropic's own API.
 
-```
+```text
 Browser Cookie (sessionKey)
         ↓
 GET claude.ai/api/organizations/{org_id}/usage
@@ -86,7 +83,7 @@ Toolbar badge + Popup UI + Notifications
 
 ## 📁 File Structure
 
-```
+```text
 chrome-extension/
 ├── manifest.json        # Manifest V3 config + permissions
 ├── background.js        # Service worker — polling, badge, notifications
@@ -105,7 +102,7 @@ chrome-extension/
 ## 🔑 Permissions
 
 | Permission | Why it's needed |
-|---|---|
+| :--- | :--- |
 | `cookies` | Read `sessionKey` from `claude.ai` automatically |
 | `storage` | Save profiles and settings locally |
 | `alarms` | Schedule background refresh polling |
@@ -121,7 +118,7 @@ chrome-extension/
 - [x] Phase 1 — Core: auth, API, popup UI, toolbar badge
 - [x] Phase 2 — Automation: auto-refresh, notifications, settings page
 - [x] Phase 3 — Profiles: multi-account management, profile switcher
-- [ ] Phase 4 — Polish: Chrome Web Store submission, icon styles
+- [x] Phase 4 — Polish: Chrome Web Store submission, icon styles
 - [ ] Phase 5 — API Console tracking (Anthropic API key support)
 - [ ] Firefox / Edge port
 
@@ -148,9 +145,8 @@ Follow the existing code style and keep commits descriptive.
 
 ## 📜 License
 
-MIT — see [LICENSE](../../blob/main/LICENSE) for details.
-
-This project is a fork of [Claude Usage Tracker](https://github.com/hamed-elfayome/Claude-Usage-Tracker) by [@hamed-elfayome](https://github.com/hamed-elfayome), used under the MIT License.
+**MIT** — see [LICENSE](LICENSE) for details.  
+This project is a fork of [Claude Usage Tracker](https://github.com/hamed-elfayome/Claude-Usage-Tracker) by @hamed-elfayome, used under the MIT License.
 
 ---
 
@@ -158,7 +154,7 @@ This project is a fork of [Claude Usage Tracker](https://github.com/hamed-elfayo
 
 This extension is not affiliated with, endorsed by, or sponsored by Anthropic PBC. Claude is a trademark of Anthropic PBC. This is an independent third-party tool created for personal usage monitoring.
 
-<div align="center">
-<br />
-Built with ❤️ for the Claude community · <a href="../../issues">Report an issue</a>
+<div align="center"> 
+  <br /> 
+  Built with ❤️ for the Claude community · <a href="../../issues">Report an issue</a> 
 </div>
