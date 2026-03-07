@@ -52,8 +52,9 @@ The Chrome Web Store listing is **pending approval**. You can wait for it to go 
 
 ### Option 1 — Load Unpacked (Developer Mode)
 
-1. **Clone this repository** ```bash
-   git clone [https://github.com/ali-aldahmani/claude-usage-extension.git](https://github.com/ali-aldahmani/claude-usage-extension.git)
+1. **Clone this repository**
+   ```bash
+   git clone [https://github.com/Ali-Aldahmani/claude-usage-extension.git](https://github.com/Ali-Aldahmani/claude-usage-extension.git)
    ```
 2. Open Chrome and go to: `chrome://extensions/`
 3. Enable **"Developer mode"** (toggle at the top right).
