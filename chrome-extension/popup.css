@@ -173,6 +173,14 @@ a { color: var(--accent); }
 .icon-btn svg { width: 16px; height: 16px; }
 
 /* ── State panels ── */
+.state-panel[hidden],
+#usageSection[hidden] {
+  display: none !important;
+}
+.state-panel,
+#usageSection {
+  min-height: 80px;
+}
 .state-panel {
   display: flex;
   flex-direction: column;
@@ -274,6 +282,9 @@ a { color: var(--accent); }
 .reset-label { font-size: 11px; color: var(--text-muted); }
 
 /* ── Footer ── */
+#footerBar[hidden] {
+  display: none !important;
+}
 .footer {
   display: flex;
   align-items: center;

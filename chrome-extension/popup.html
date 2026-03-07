@@ -17,7 +17,7 @@
       </div>
 
       <div class="header-actions">
-        <!-- Profile switcher -->
+        <!-- Profile switcher and settings (always visible) -->
         <div class="profile-switcher" id="profileSwitcher">
           <button class="profile-btn" id="profileBtn" aria-haspopup="listbox" aria-expanded="false">
             <span class="profile-label" id="profileLabel">Loading…</span>
@@ -42,7 +42,7 @@
     <!-- ── States ─────────────────────────────────────────── -->
 
     <!-- Loading -->
-    <div class="state-panel" id="stateLoading">
+    <div class="state-panel" id="stateLoading" hidden>
       <div class="spinner"></div>
       <p>Loading usage data…</p>
     </div>

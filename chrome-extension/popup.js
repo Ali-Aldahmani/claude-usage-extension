@@ -1,6 +1,7 @@
 // popup.js — Claude Usage Tracker popup logic
 
 import {
+  initStorage,
   getActiveProfile,
   getProfiles,
   getActiveProfileId,
@@ -35,10 +36,13 @@ const retryBtn        = $('retryBtn');
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 function showOnly(el) {
-  for (const s of [stateLoading, stateNoKey, stateError, usageSection]) s.hidden = true;
-  footerBar.hidden = true;
-  el.hidden = false;
-  if (el === usageSection) footerBar.hidden = false;
+  const panels = [stateLoading, stateNoKey, stateError, usageSection];
+  for (const s of panels) {
+    if (s) s.setAttribute('hidden', '');
+  }
+  if (footerBar) footerBar.setAttribute('hidden', '');
+  if (el) el.removeAttribute('hidden');
+  if (el === usageSection && footerBar) footerBar.removeAttribute('hidden');
 }
 
 function pctColor(pct) {
@@ -159,38 +163,39 @@ profileBtn.addEventListener('click', e => { e.stopPropagation(); toggleDropdown(
 // ── Render ─────────────────────────────────────────────────────────────────
 
 async function render() {
+  await initStorage();
   await buildProfileDropdown();
 
   const profile = await getActiveProfile();
   if (!profile) { showOnly(stateNoKey); return; }
 
-  const usage = profile.cachedUsage;
-
-  if (!usage) {
-    // First load — trigger background refresh then wait briefly
-    chrome.runtime.sendMessage({ type: 'REFRESH' });
-    showOnly(stateLoading);
-
-    // Poll storage for up to 5 seconds
-    let attempts = 0;
-    const poll = setInterval(async () => {
-      attempts++;
-      const fresh = await getActiveProfile();
-      if (fresh?.cachedUsage) {
-        clearInterval(poll);
-        renderUsage(fresh);
-      } else if (attempts >= 10) {
-        clearInterval(poll);
-        // Check if no session key
-        const hasCookie = await checkForSessionKey(profile);
-        if (!hasCookie) showOnly(stateNoKey);
-        else showError('No data', 'Could not fetch usage. Try again.');
-      }
-    }, 500);
+  // If we already have cached data, show it immediately
+  if (profile.cachedUsage) {
+    renderUsage(profile);
     return;
   }
 
-  renderUsage(profile);
+  // No cached data yet — trigger refresh and wait for background to finish
+  showOnly(stateLoading);
+  try {
+    await chrome.runtime.sendMessage({ type: 'REFRESH' });
+  } catch (_) { /* background may have unloaded */ }
+
+  let attempts = 0;
+  const maxAttempts = 24; // ~12 seconds
+  const poll = setInterval(async () => {
+    attempts++;
+    const fresh = await getActiveProfile();
+    if (fresh?.cachedUsage) {
+      clearInterval(poll);
+      renderUsage(fresh);
+    } else if (attempts >= maxAttempts) {
+      clearInterval(poll);
+      const hasCookie = await checkForSessionKey(fresh);
+      if (!hasCookie) showOnly(stateNoKey);
+      else showError('Could not load usage', 'Check you’re logged in at claude.ai or add a session key in Settings, then retry.');
+    }
+  }, 500);
 }
 
 async function checkForSessionKey(profile) {
@@ -260,4 +265,6 @@ retryBtn.addEventListener('click', () => { showOnly(stateLoading); render(); });
 
 // ── Init ───────────────────────────────────────────────────────────────────
 
+// Show loading immediately so only one state is visible from the start
+showOnly(stateLoading);
 render();
