@@ -4,7 +4,12 @@
 <img src="https://img.shields.io/badge/Manifest-V3-orange?style=for-the-badge" />
 <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
 <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-blueviolet?style=for-the-badge" />
-<img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFC107?style=for-the-badge&logo=buymeacoffee&logoColor=white" />
+
+<br /><br />
+
+<a href="https://www.buymeacoffee.com/hamedelfayome" target="_blank">
+  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="40">
+</a>
 
 <br /><br />
 
@@ -13,7 +18,7 @@
 **Real-time Claude AI usage monitoring, right in your browser toolbar.**
 Cross-platform port of the [macOS menu bar app](https://github.com/hamed-elfayome/Claude-Usage-Tracker) — rebuilt as a Chrome extension for Windows, macOS, and Linux.
 
-[Install from Chrome Web Store](https://chrome.google.com/webstore/detail/bedcedichikifoaofpfphkbngdgigbhl) · [Report a Bug](../../issues) · [Request a Feature](../../issues) · [Buy Me a Coffee](https://www.buymeacoffee.com/alialdahmani)
+[Install from Chrome Web Store](https://chrome.google.com/webstore/detail/bedcedichikifoaofpfphkbngdgigbhl) · [Report a Bug](../../issues) · [Request a Feature](../../issues)
 
 ---
 
