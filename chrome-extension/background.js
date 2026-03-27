@@ -91,7 +91,11 @@ async function refreshUsage() {
 
 function getBadgeColor(pct) {
   if (pct >= 90) return '#ef4444';
-  if (pct >= 75) return '#f59e0b';
+  if (pct >= 75) return '#f97316';
+  if (pct >= 60) return '#f59e0b';
+  if (pct >= 45) return '#eab308';
+  if (pct >= 30) return '#06b6d4';
+  if (pct >= 15) return '#10b981';
   return '#22c55e';
 }
 
