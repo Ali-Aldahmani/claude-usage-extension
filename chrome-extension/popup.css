@@ -12,6 +12,13 @@
   --green:      #22c55e;
   --yellow:     #f59e0b;
   --red:        #ef4444;
+  --c1:         #22c55e;
+  --c2:         #10b981;
+  --c3:         #06b6d4;
+  --c4:         #eab308;
+  --c5:         #f59e0b;
+  --c6:         #f97316;
+  --c7:         #ef4444;
   --radius:     10px;
   --font:       -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --w:          340px;
@@ -264,8 +271,13 @@ a { color: var(--accent); }
   transition: width 0.4s ease, background-color 0.4s ease;
   max-width: 100%;
 }
-.progress-bar.yellow { background: var(--yellow); }
-.progress-bar.red    { background: var(--red); }
+.progress-bar.c1 { background: var(--c1); }
+.progress-bar.c2 { background: var(--c2); }
+.progress-bar.c3 { background: var(--c3); }
+.progress-bar.c4 { background: var(--c4); }
+.progress-bar.c5 { background: var(--c5); }
+.progress-bar.c6 { background: var(--c6); }
+.progress-bar.c7 { background: var(--c7); }
 
 .card-footer {
   display: flex;

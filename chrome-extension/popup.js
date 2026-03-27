@@ -46,9 +46,13 @@ function showOnly(el) {
 }
 
 function pctColor(pct) {
-  if (pct >= 90) return 'red';
-  if (pct >= 75) return 'yellow';
-  return '';
+  if (pct >= 90) return 'c7';
+  if (pct >= 75) return 'c6';
+  if (pct >= 60) return 'c5';
+  if (pct >= 45) return 'c4';
+  if (pct >= 30) return 'c3';
+  if (pct >= 15) return 'c2';
+  return 'c1';
 }
 
 function formatCountdown(isoString) {
